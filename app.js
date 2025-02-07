@@ -31,6 +31,9 @@ if (app.get("env") === "production") {
   sessionParms.cookie.secure = true;
 }
 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 app.use(session(sessionParms));
 app.use(flash());
 
@@ -54,7 +57,6 @@ app.use((req, res, next) => {
 });
 
 app.set("view engine", "ejs");
-app.use(require("body-parser").urlencoded({ extended: true }));
 
 app.get("/secretWord", (req, res) => {
   if (!req.session.secretWord) {
@@ -65,7 +67,7 @@ app.get("/secretWord", (req, res) => {
 
 app.post("/secretWord", (req, res) => {
   // req.session.secretWord = req.body.secretWord;
-  if (req.body.secretWord.toUpperCase()[0] == "P") {
+  if (req.body.secretWord.toUpperCase()[0] === "P") {
     req.flash("error", "That word won't work!");
     req.flash("error", "You can't use words that start with p.");
   } else {
