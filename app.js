@@ -6,6 +6,7 @@ const app = express();
 require("dotenv").config();
 const session = require("express-session");
 const flash = require("connect-flash");
+
 const MongoDBStore = require("connect-mongodb-session")(session);
 const url = process.env.MONGO_URI;
 
@@ -32,6 +33,19 @@ if (app.get("env") === "production") {
 
 app.use(session(sessionParms));
 app.use(flash());
+
+app.use(require("./middleware/storeLocals"));
+app.get("/", (req, res) => {
+  res.render("index");
+});
+app.use("/sessions", require("./routes/sessionRoutes.js"));
+
+const passport = require("passport");
+const passportInit = require("./passport/passportInit");
+
+passportInit();
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use((req, res, next) => {
   res.locals.info = req.flash("info");
@@ -61,7 +75,6 @@ app.post("/secretWord", (req, res) => {
   res.redirect("/secretWord");
 });
 
-
 app.use((req, res) => {
   res.status(404).send(`That page (${req.url}) was not found.`);
 });
@@ -75,6 +88,7 @@ const port = process.env.PORT || 3000;
 
 const start = async () => {
   try {
+    await require("./db/connect")(process.env.MONGO_URI);
     app.listen(port, () =>
       console.log(`Server is listening on port ${port}...`)
     );
