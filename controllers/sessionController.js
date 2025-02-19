@@ -48,12 +48,12 @@ const logonShow = (req, res) => {
   if (req.user) {
     return res.redirect("/");
   }
-  res.render("logon");
+  res.render("logon", { csrfToken: res.locals._csrf });
 };
 
 module.exports = {
   registerShow,
   registerDo,
   logoff,
-  logonShow,
+  logonShow
 };
