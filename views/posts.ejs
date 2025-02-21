@@ -1,0 +1,49 @@
+<%- include('partials/header') %>
+
+<div class="container mt-4">
+  <div>
+    <a href="/secretWord">Secret word</a>
+  </div>
+  <h2>Posts</h2>
+
+  <% if (info.length > 0) { %>
+    <div class="alert alert-success"><%= info %></div>
+  <% } %>
+
+  <% if (errors.length > 0) { %>
+    <div class="alert alert-danger"><%= errors %></div>
+  <% } %>
+
+  <div>
+    <a href="/posts/new" class="btn btn-primary mb-3">Add New Post</a>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% posts?.forEach(post => { %>
+      <tr>
+        <td><%= post.title %></td>
+        <td><%= post.description %></td>
+        <td>
+          <a href="/posts/edit/<%= post._id %>" class="btn btn-sm btn-warning">Edit</a>
+          <form action="/posts/delete/<%= post._id %>" method="POST" style="display:inline;">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
+              Delete
+            </button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('partials/footer') %>
